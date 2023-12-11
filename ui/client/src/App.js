@@ -7,25 +7,21 @@ function App() {
 
   const createEmptyMap = () => Array.from({ length: 10 }, () => Array(10).fill(0));
 
-  const web3 = new Web3("https://testnet-rpc1.artela.network");
+  const web3 = new Web3("http://47.254.27.97:8545");
   const gasPrice = 7;
   const callcata_down = "0x70e87aaf0000000000000000000000000000000000000000000000000000000000000000";
   const callcata_left = "0x70e87aaf0000000000000000000000000000000000000000000000000000000000000001";
   const callcata_up = "0x70e87aaf0000000000000000000000000000000000000000000000000000000000000002";
   const callcata_right = "0x70e87aaf0000000000000000000000000000000000000000000000000000000000000003";
-  const contractAddr = "0xda27f72137a12f2e747072e198e5530348bb1bfd"
+  const contractAddr = "0x8c563384b3658321EEE1Ced1b791f700e7Ca1258"
   const preSetPrivateKeys = [
     // Test key. Don't expect to get any tokens here, idiot scanner, get out!
-    '0xfe67cb7a1998513a0d4fce822782f6aed46025d5179406736a8d17fe9bdb0929',
-    '0x35c242317a4536abc0b046feec2e4e6437776262d155a7b4dcc3bb015007bbc1',
-    '0xbcdd5be2a7ee3baaa2dd2d433d86e1dc8e6e0b25bcf8a8e7451921deef120075',
-    '0x4f7459264786f5d0ff123fca2aeeca42fd00d8079a097738981f7f7230eaa43c',
-    '0xed952bc312529a33ca67be2ee0f4c336a1582e7e4d42100c50dc6c018cf01abc'
+    '0xb421b81b0d440f71a75ff95a045539c36cd62153eba89ee7155a0e4860970dd6',
   ];
 
   // 假设这是异步获取到的编码数据
   const fetchEncodedBoardData = async () => {
-    const response = await fetch('https://testnet-rpc1.artela.network', {
+    const response = await fetch('http://47.254.27.97:8545', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +45,7 @@ function App() {
 
   const fetchScoreData = async (address) => {
 
-    const response = await fetch('https://testnet-rpc1.artela.network', {
+    const response = await fetch('http://47.254.27.97:8545', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -187,7 +183,7 @@ function App() {
 
   const updatePlayersList = (boardData) => {
     const newPlayers = boardData.map(tile => {
-      if (tile.occupantId != '0') {
+      if (tile.occupantId !== '0') {
         // 假设 tile 结构包含玩家信息
         return {
           occupantId: tile.occupantId,
