@@ -2,12 +2,18 @@
 pragma solidity ^0.8.13;
 
 contract Royale {
+    // The game board is a 10x10 grid, adjust value to modify the board size
     uint8 public constant MAP_WIDTH = 10;
     uint8 public constant MAP_HEIGHT = 10;
     uint8 public constant TILE_COUNT = MAP_WIDTH * MAP_HEIGHT;
+
+    // The maximum number of players in a room
     uint8 public constant PLAYER_COUNT = 10;
+
+    // The maximum number of rooms
     uint64 public constant MAX_ROOM_NUMBER = 10;
 
+    // The direction the player can move
     enum Dir {
         DOWN,
         LEFT,
@@ -91,16 +97,20 @@ contract Royale {
         owner = msg.sender;
     }
 
+    // Maintenance method, set max room enabled
     function setMaxRoomEnabled(uint64 _maxRoomEnabled) public {
         require(msg.sender == owner, "not owner");
         require(_maxRoomEnabled <= MAX_ROOM_NUMBER, "exceed max room number");
         maxRoomEnabled = _maxRoomEnabled;
     }
 
+    // Owner check for the contract, aspect binding need this
     function isOwner(address user) external view returns (bool result) {
         return user == owner;
     }
 
+    // Player need to invoke the method to join a room.
+    // First room with empty slot will be joined.
     function join() public {
         require(playerRoomId[msg.sender] == 0, "already joined another room");
 
@@ -112,6 +122,7 @@ contract Royale {
         _join(availableRoom, slot);
     }
 
+    // Query method for checking available room and slot for frontend
     function getAvailableRoomAndSlot() public view returns (uint64 roomId, uint8 slot) {
         return _getAvailableRoomAndSlot();
     }
@@ -130,6 +141,7 @@ contract Royale {
         return (0, 0);
     }
 
+    // Check if the player is stale
     function _isStale(uint256 lastMovedTime) private view returns (bool) {
         return (lastMovedTime + 15 minutes) < block.timestamp;
     }
@@ -196,23 +208,28 @@ contract Royale {
         return uint8(uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, salt))) % TILE_COUNT) + 1;
     }
 
+    // Method for binding the player's wallet address to the player's burnable wallet address
     function registerWalletOwner(address ownerAddress) public {
         walletOwner[msg.sender] = ownerAddress;
         ownedWallets[ownerAddress].push(msg.sender);
     }
 
+    // Query method for checking the player's wallet owner
     function getWalletOwner(address wallet) public view returns (address) {
         return walletOwner[wallet];
     }
 
+    // Query method for checking the player's owned burnable wallets
     function getOwnedWallets(address ownerAddress) public view returns (address[] memory) {
         return ownedWallets[ownerAddress];
     }
 
+    // Query method for checking the room's status
     function getAllRooms() public view returns (Room[MAX_ROOM_NUMBER] memory) {
         return rooms;
     }
 
+    // Maintenance method for admin, call this to reset all rooms
     function resetAllRooms() public {
         // just in case if there is some bug we cannot fix, or all rooms are occupied by zombies
         require(msg.sender == owner, "not owner");
@@ -221,6 +238,7 @@ contract Royale {
         }
     }
 
+    // Maintenance method for admin, call this to reset a single room
     function resetRoom(uint64 roomId) public {
         // just in case if there is some bug we cannot fix, or a single room are occupied by zombies
         require(msg.sender == owner, "not owner");
@@ -234,6 +252,7 @@ contract Royale {
         for (uint8 i = 0; i < PLAYER_COUNT; ++i) {
             address player = room.players[i];
             if (player != address(0)) {
+                // remove every player from a room
                 _removePlayerFromRoom(room, roomId, i + 1);
             }
         }
