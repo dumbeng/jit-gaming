@@ -10,9 +10,10 @@ import {
     PostContractCallInput,
     stringToUint8Array,
     sys,
+    InitInput,
     uint8ArrayToHex,
     uint8ArrayToString,
-} from "@artela/aspect-libs";
+} from "@artela-next/aspect-libs";
 import { Protobuf } from "as-proto/assembly/Protobuf";
 
 /**
@@ -258,5 +259,8 @@ export class Aspect implements IPostContractCallJP, IAspectOperation {
 
     isOwner(sender: Uint8Array): bool {
         return false;
+    }
+
+    init(input: InitInput): void {
     }
 }

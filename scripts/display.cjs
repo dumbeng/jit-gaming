@@ -1,7 +1,7 @@
 "use strict"
 
 const { execSync } = require('child_process');
-const Web3 = require('@artela/web3');
+const Web3 = require('@artela-next/web3');
 const fs = require('fs');
 const web3 = new Web3();
 const MAP_WIDTH = 10;

@@ -1,4 +1,4 @@
-const Web3 = require('@artela/web3');
+const Web3 = require('@artela-next/web3');
 const fs = require("fs");
 const rpcUrls = JSON.parse(fs.readFileSync('./project.config.json').toString()).nodes; // Replace with your RPC URL
 const royaleAbi = JSON.parse(fs.readFileSync('./contracts/build/contract/Royale.abi').toString());

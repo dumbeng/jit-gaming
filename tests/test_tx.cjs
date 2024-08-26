@@ -2,9 +2,9 @@
 
 //todo modify it
 
-const Web3 = require('@artela/web3');
+const Web3 = require('@artela-next/web3');
 const fs = require("fs");
-const { numberToHex } = require("@artela/web3-utils");
+const { numberToHex } = require("@artela-next/web3-utils");
 const BigNumber = require('bignumber.js');
 
 const contractBin = fs.readFileSync('./contracts/build/contract/Royale.bin', "utf-8");
@@ -12,9 +12,9 @@ const abi = fs.readFileSync('./contracts/build/contract/Royale.abi', "utf-8")
 const contractABI = JSON.parse(abi);
 const EthereumTx = require('ethereumjs-tx').Transaction;
 
+const factoryByteCode = JSON.parse(fs.readFileSync('./tests/jit-aa-abi/AspectEnabledSimpleAccountFactory.json', "utf-8")).bytecode;
 const walletABI = JSON.parse(fs.readFileSync('./tests/jit-aa-abi/AspectEnabledSimpleAccount.abi', "utf-8"));
 const factoryABI = JSON.parse(fs.readFileSync('./tests/jit-aa-abi/AspectEnabledSimpleAccountFactory.abi', "utf-8"));
-const factoryAddress = "0x7b20970624Cd01582Cd01385B67B969446AC5110";
 
 const demoContractOptions = {
     data: contractBin
@@ -53,11 +53,13 @@ async function f() {
     web3.eth.accounts.wallet.add(account.privateKey);
 
     let chainId = await web3.eth.getChainId();
-    let nonce = await web3.eth.getTransactionCount(account.address);
     let aspectCore = web3.atl.aspectCore();
 
+    let factoryConract = await new web3.eth.Contract(factoryABI, undefined,{ data: factoryByteCode }).deploy({
+        arguments: ['0x000000000000000000000000000000000000aaEC'],
+    }).send( { from: account.address, gas: 4000000, gasPrice: await web3.eth.getGasPrice() });
 
-    let factoryConract = new web3.eth.Contract(factoryABI, factoryAddress)
+    let nonce = await web3.eth.getTransactionCount(account.address);
 
     // ******************************************
     // prepare 1. deploy contract

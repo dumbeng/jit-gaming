@@ -1,8 +1,6 @@
 {
-  "node": "https://betanet-inner2.artela.network",
+  "node": "http://127.0.0.1:8545",
   "nodes": [
-    "https://betanet-inner2.artela.network",
-    "https://betanet-inner3.artela.network",
-    "https://betanet-inner4.artela.network"
+    "http://127.0.0.1:8545"
   ]
 }
