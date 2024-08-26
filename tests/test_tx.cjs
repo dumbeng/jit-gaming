@@ -52,7 +52,6 @@ async function f() {
     const account = web3.eth.accounts.privateKeyToAccount(sk.trim());
     web3.eth.accounts.wallet.add(account.privateKey);
 
-    let gasPrice = await web3.eth.getGasPrice();
     let chainId = await web3.eth.getChainId();
     let nonce = await web3.eth.getTransactionCount(account.address);
     let aspectCore = web3.atl.aspectCore();
@@ -69,7 +68,7 @@ async function f() {
     let tx = {
         from: account.address,
         nonce: nonce++,
-        gasPrice,
+        gasPrice: await web3.eth.getGasPrice(),
         gas: 4000000,
         data: deployData,
         chainId
@@ -104,7 +103,7 @@ async function f() {
     tx = {
         from: account.address,
         nonce: nonce++,
-        gasPrice,
+        gasPrice: await web3.eth.getGasPrice(),
         gas: 4000000,
         to: aspectCore.options.address,
         data: aspectDeployData,
@@ -133,7 +132,7 @@ async function f() {
     tx = {
         from: account.address,
         nonce: nonce++,
-        gasPrice,
+        gasPrice: await web3.eth.getGasPrice(),
         gas: 4000000,
         data: contractBindingData,
         to: aspectCore.options.address,
@@ -153,7 +152,7 @@ async function f() {
         await factoryConract.methods.createAccount(account.address, nonce + 1).send({
             from: account.address,
             gas: 4000000,
-            gasPrice: gasPrice,
+            gasPrice: await web3.eth.getGasPrice(),
             nonce: nonce++
         }).on('transactionHash', (txHash) => {
             console.log('aa wallet create tx: ', txHash);
@@ -172,7 +171,7 @@ async function f() {
         tx = {
             from: account.address,
             nonce: nonce++,
-            gasPrice,
+            gasPrice: await web3.eth.getGasPrice(),
             gas: 210000,
             value: web3.utils.toWei(amount.toString(), 'ether'),
             to: walletAddr,
@@ -196,7 +195,7 @@ async function f() {
         await walletContract.methods.approveAspects([aspect.options.address]).send({
             from: account.address,
             gas: 20000000,
-            gasPrice: gasPrice,
+            gasPrice: await web3.eth.getGasPrice(),
             nonce: nonce++
         }).on('transactionHash', (txHash) => {
             console.log('aa wallet approve aspect tx: ', txHash);
@@ -221,7 +220,7 @@ async function f() {
         tx = {
             from: account.address,
             nonce: nonce++,
-            gasPrice,
+            gasPrice: await web3.eth.getGasPrice(),
             gas: 8000000,
             data: calldata,
             to: aspectCore.options.address,
@@ -272,7 +271,7 @@ async function f() {
     await contract.methods.move(1, 2).send({
         from: account.address,
         gas: 20000000,
-        gasPrice: gasPrice,
+        gasPrice: await web3.eth.getGasPrice(),
         nonce: nonce++
     }).on('transactionHash', (txHash) => {
         console.log('move tx: ', txHash);
@@ -285,7 +284,7 @@ async function f() {
     const game = await contract.methods.getGameStatus().call({
         from: account.address,
         gas: 20000000,
-        gasPrice: gasPrice,
+        gasPrice: await web3.eth.getGasPrice(),
     });
 
     console.log(game.board);
